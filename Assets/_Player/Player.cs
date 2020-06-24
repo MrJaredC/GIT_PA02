@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -15,11 +16,17 @@ public class Player : MonoBehaviour
 
     private float moveSpeed = 0.05f;
 
+    public GameObject Explosion;
+
+    public int Health = 5;
+    public Text txt_Health;
+
     void Start()
     {
         thisController = GetComponent<CharacterController>();
         thisAnimator = GetComponentInChildren<Animator>();
         playerMesh = transform.GetChild(0);
+
     }
 
     void Update()
@@ -52,6 +59,20 @@ public class Player : MonoBehaviour
 
         thisController.Move(MoveDirection);
         transform.position = new Vector3(Mathf.Clamp(transform.position.x, -1.5f, 1.5f), transform.position.y, transform.position.z);
+
+
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Obstacle")
+        {
+            GameObject tempObject = Instantiate(Explosion, this.transform.position, this.transform.rotation) as GameObject;
+            Destroy(other.gameObject);
+            Destroy(tempObject, 0.3f);
+
+            Health--;
+            txt_Health.text = "Health : " + Health;
+        }
+    }
 }
